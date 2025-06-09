@@ -13,10 +13,13 @@ import { HttpErrorResponse } from '@angular/common/http';
     <div class="form-overlay" (click)="onCancel()">
       <div class="form-modal" (click)="$event.stopPropagation()">
         <div class="form-header">
-          <h3>{{ isEditMode ? 'Edit Customer' : 'Add New Customer' }}</h3>
+          <h2>
+            <span class="header-icon">{{ isEditMode ? '✏️' : '👤' }}</span>
+            {{ isEditMode ? 'Edit Customer' : 'Add New Customer' }}
+          </h2>
           <button class="close-btn" (click)="onCancel()">&times;</button>
         </div>
-        
+
         <form (ngSubmit)="onSubmit()" #customerForm="ngForm" class="customer-form">
           <div class="form-group">
             <label for="name">Name *</label>
@@ -30,7 +33,7 @@ import { HttpErrorResponse } from '@angular/common/http';
               placeholder="Enter customer name"
             >
           </div>
-          
+
           <div class="form-group">
             <label for="email">Email *</label>
             <input
@@ -44,38 +47,14 @@ import { HttpErrorResponse } from '@angular/common/http';
               placeholder="Enter email address"
             >
           </div>
-          
-          <div class="form-group">
-            <label for="phone">Phone</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              [(ngModel)]="customer.phone"
-              class="form-control"
-              placeholder="Enter phone number"
-            >
-          </div>
-          
-          <div class="form-group">
-            <label for="address">Address</label>
-            <textarea
-              id="address"
-              name="address"
-              [(ngModel)]="customer.address"
-              class="form-control"
-              rows="3"
-              placeholder="Enter address"
-            ></textarea>
-          </div>
-          
+
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" (click)="onCancel()">
               Cancel
             </button>
-            <button 
-              type="submit" 
-              class="btn btn-primary" 
+            <button
+              type="submit"
+              class="btn btn-primary"
               [disabled]="!customerForm.form.valid || isSubmitting"
             >
               {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
@@ -98,7 +77,7 @@ import { HttpErrorResponse } from '@angular/common/http';
       align-items: center;
       z-index: 1000;
     }
-    
+
     .form-modal {
       background: white;
       border-radius: 8px;
@@ -108,115 +87,93 @@ import { HttpErrorResponse } from '@angular/common/http';
       overflow-y: auto;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    
+
     .form-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1.5rem;
       border-bottom: 1px solid #dee2e6;
-      background-color: #f8f9fa;
     }
-    
+
     .form-header h3 {
       margin: 0;
       color: #2c3e50;
     }
-    
+
     .close-btn {
       background: none;
       border: none;
       font-size: 1.5rem;
       cursor: pointer;
       color: #6c757d;
-      padding: 0;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
-    
-    .close-btn:hover {
-      color: #495057;
-    }
-    
+
     .customer-form {
       padding: 1.5rem;
     }
-    
+
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
-    
+
     .form-group label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
       color: #495057;
     }
-    
+
     .form-control {
       width: 100%;
       padding: 0.75rem;
+      font-size: 1rem;
       border: 1px solid #ced4da;
       border-radius: 4px;
-      font-size: 1rem;
-      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      transition: border-color 0.15s ease-in-out;
     }
-    
+
     .form-control:focus {
-      outline: none;
       border-color: #80bdff;
+      outline: 0;
       box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     }
-    
-    .form-control.ng-invalid.ng-touched {
-      border-color: #dc3545;
-    }
-    
+
     .form-actions {
       display: flex;
       justify-content: flex-end;
       gap: 1rem;
-      margin-top: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid #dee2e6;
+      margin-top: 2rem;
     }
-    
+
     .btn {
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1rem;
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 1rem;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 0.875rem;
       transition: background-color 0.2s;
-      min-width: 100px;
     }
-    
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    
+
     .btn-primary {
       background-color: #007bff;
       color: white;
     }
-    
-    .btn-primary:hover:not(:disabled) {
+
+    .btn-primary:hover {
       background-color: #0056b3;
     }
-    
+
+    .btn-primary:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+
     .btn-secondary {
       background-color: #6c757d;
       color: white;
     }
-    
+
     .btn-secondary:hover {
       background-color: #545b62;
     }
@@ -230,11 +187,9 @@ export class CustomerFormComponent implements OnInit {
   public customer: Customer = {
     id: 0,
     name: '',
-    email: '',
-    phone: '',
-    address: ''
+    email: ''
   };
-  
+
   public isEditMode = false;
   public isSubmitting = false;
 
@@ -249,19 +204,22 @@ export class CustomerFormComponent implements OnInit {
 
   public onSubmit(): void {
     if (this.isSubmitting) return;
-    
+
     this.isSubmitting = true;
-    
-    const operation = this.isEditMode 
+    console.log('Submitting customer:', this.customer);
+
+    const operation = this.isEditMode
       ? this.customerService.updateCustomer(this.customer)
       : this.customerService.addCustomer(this.customer);
 
     operation.subscribe({
       next: (response: Customer) => {
+        console.log('Customer saved successfully:', response);
         this.formSubmit.emit(response);
         this.isSubmitting = false;
       },
       error: (error: HttpErrorResponse) => {
+        console.error('Error saving customer:', error);
         alert('Error saving customer: ' + error.message);
         this.isSubmitting = false;
       }
