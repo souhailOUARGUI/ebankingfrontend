@@ -8,7 +8,8 @@ import { Observable, retry, catchError, throwError, delay } from 'rxjs';
 })
 
 export class CustomerService {
-  private apiServerUrl = 'http://localhost:8085';
+  // Use /api prefix which will be proxied to the backend
+  private apiServerUrl = '/api';
 
   constructor(private http: HttpClient) {
   }
@@ -30,17 +31,25 @@ export class CustomerService {
   }
 
   public addCustomer(customer: Customer): Observable<Customer> {
-    return this.http.post<Customer>(`${this.apiServerUrl}/customers`, customer)
-      .pipe(
-        catchError(this.handleError)
-      );
+    console.log('Adding customer:', customer);
+    return this.http.post<Customer>(`${this.apiServerUrl}/customers`, customer, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).pipe(
+      catchError(this.handleError)
+    );
   }
 
   public updateCustomer(customer: Customer): Observable<Customer> {
-    return this.http.put<Customer>(`${this.apiServerUrl}/customers`, customer)
-      .pipe(
-        catchError(this.handleError)
-      );
+    console.log('Updating customer:', customer);
+    return this.http.put<Customer>(`${this.apiServerUrl}/customers`, customer, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).pipe(
+      catchError(this.handleError)
+    );
   }
 
   public deleteCustomer(id: number): Observable<void> {

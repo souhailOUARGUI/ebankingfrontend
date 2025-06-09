@@ -1,18 +1,31 @@
 export interface BankAccount {
-  id: number;
-  accountNumber: string;
-  accountType: AccountType;
+  id: string;
   balance: number;
-  customerId: number;
-  customerName?: string;
-  dateCreated?: Date;
-  status: AccountStatus;
+  createdAt: Date | string;
+  status: string | null; // Can be null
+  customerId?: number; // Optional since backend has customer object
+  customer?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  customerDTO?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  type: string; // "CurrentAccount" or "SavingAccount"
+  currency?: string;
+  interestRate?: number; // For saving accounts
+  overdraft?: number; // For current accounts
 }
 
-export enum AccountType {
-  CHECKING = 'CHECKING',
-  SAVINGS = 'SAVINGS',
-  BUSINESS = 'BUSINESS'
+export interface SavingBankAccount extends BankAccount {
+  interestRate: number;
+}
+
+export interface CurrentBankAccount extends BankAccount {
+  overDraft: number;
 }
 
 export enum AccountStatus {
